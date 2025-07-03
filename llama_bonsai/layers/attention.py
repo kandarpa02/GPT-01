@@ -14,18 +14,23 @@ def merge_heads(vec:tf.Tensor) -> tf.Tensor:
     vec = tf.reshape(vec, shape=[batch, seq, heads * h_dim]) # type: ignore
     return vec
 
+
 class MultiHeadAttention(tf.keras.layers.Layer):
-    def __init__(self, dim:int, heads:int, mask=False, seed=0):
+    def __init__(self, dim: int, heads: int, mask=False, seed=0):
         super().__init__()
-        self.qw = tf.random.normal((dim, dim), seed=seed)
-        self.kw = tf.random.normal((dim, dim), seed=seed)
-        self.vw = tf.random.normal((dim, dim), seed=seed)
-        self.ow = tf.random.normal((dim, dim), seed=seed)
+        self.qw = self.add_weight(name = "qw", shape=(dim, dim),
+                                  initializer=tf.keras.initializers.RandomNormal(seed=seed))
+        self.kw = self.add_weight(name = "kw", shape=(dim, dim),
+                                  initializer=tf.keras.initializers.RandomNormal(seed=seed))
+        self.vw = self.add_weight(name = "vw", shape=(dim, dim),
+                                  initializer=tf.keras.initializers.RandomNormal(seed=seed))
+        self.ow = self.add_weight(name = "ow", shape=(dim, dim),
+                                  initializer=tf.keras.initializers.RandomNormal(seed=seed))
         self.heads = heads
         self.dim = dim
         self.mask = mask
 
-    def __call__(self, x):
+    def call(self, x):
         Q = tf.matmul(x, self.qw)
         K = tf.matmul(x, self.kw)
         V = tf.matmul(x, self.vw)
@@ -34,21 +39,19 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         K = split_heads(K, self.heads)
         V = split_heads(V, self.heads)
 
-        score = tf.matmul(Q, ops.swapaxes(K, -1, -2)) / ops.sqrt(self.dim)
+        score = tf.matmul(Q, tf.transpose(K, [0, 1, 3, 2])) / tf.math.sqrt(float(self.dim))
 
         if self.mask:
             _, seq, _ = x.shape
-            mask = ops.tril(tf.ones((1, 1, seq, seq)))
-            score = score - 1e10 * (1.0-mask)
+            mask = tf.linalg.band_part(tf.ones((1, 1, seq, seq)), -1, 0)
+            score -= 1e10 * (1.0 - mask)
 
         weights = tf.nn.softmax(score, axis=-1)
-
         attn = tf.matmul(weights, V)
         merged = merge_heads(attn)
         out = tf.matmul(merged, self.ow)
-
         return out
-    
+
 
 # x = tf.random.uniform((3, 4, 6), seed = 0)
 # print("full_size", x.shape)
