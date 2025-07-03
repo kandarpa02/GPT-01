@@ -51,17 +51,3 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         merged = merge_heads(attn)
         out = tf.matmul(merged, self.ow)
         return out
-
-
-# x = tf.random.uniform((3, 4, 6), seed = 0)
-# print("full_size", x.shape)
-
-# xi = split_heads(x, 2)
-
-# print("split_size", xi.shape)
-
-# xj = merge_heads(xi)
-
-# print("reshape_h", xj.shape)
-
-# print(x == xj)
