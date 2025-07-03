@@ -1,5 +1,5 @@
 import tensorflow as tf
-from llama_bonsai.layers.attention import MultiHeadAttention
+from GPT01.layers.attention import MultiHeadAttention
 
 def test():
     mha1 = MultiHeadAttention(64, 8)

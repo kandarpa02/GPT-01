@@ -1,4 +1,4 @@
-from llama_bonsai.layers.ffn import FNN_GELU
+from GPT01.layers.ffn import FNN_GELU
 import tensorflow as tf
 
 def test():
