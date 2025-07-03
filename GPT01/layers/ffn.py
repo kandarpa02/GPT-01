@@ -1,4 +1,5 @@
 import tensorflow as tf
+from nami.TF import Nami
 from tensorflow.keras import layers, Sequential
 
 
@@ -25,3 +26,6 @@ class FNN_GELU(tf.keras.layers.Layer):
     def call(self, x):
         return self.seq_model(x)
 
+class FNN_NAMI(tf.keras.layers.Layer):
+    def __init__(self, dim):
+        

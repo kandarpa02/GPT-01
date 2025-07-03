@@ -8,7 +8,7 @@ setup(
     description="An LLM distillation repo using in TensorFlow",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/kandarpa02/GPT01.git",
+    url="https://github.com/kandarpa02/GPT-01.git",
     packages=find_packages(),
     python_requires=">=3.8",
     classifiers=[
