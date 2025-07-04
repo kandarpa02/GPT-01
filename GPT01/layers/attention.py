@@ -1,5 +1,4 @@
 import tensorflow as tf
-from tensorflow.keras import ops
 
 def split_heads(vec:tf.Tensor, heads:int) -> tf.Tensor:
     batch, seq, dim = vec.shape
